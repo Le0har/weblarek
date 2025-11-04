@@ -4,7 +4,7 @@ import { Products } from './components/models/Products.ts';
 import { Cart } from './components/models/Cart.ts';
 import { Buyer } from './components/models/Buyer.ts';
 import { Api } from './components/base/Api.ts';
-import { WebLarekApi } from './components/models/WebLarekApi.ts';
+import { WebLarekApi } from './components/api/WebLarekApi.ts';
 import { API_URL } from './utils/constants.ts';
 
 
@@ -84,9 +84,9 @@ console.log('************************************');
 console.log('[DEBUG] Тестирование класса WebLarekApi');
 
 const api = new Api(API_URL);
-const webLarekApiModel = new WebLarekApi(api);
+const webLarekApi = new WebLarekApi(api);
 
-const getRequest = webLarekApiModel.getProductList();
+const getRequest = webLarekApi.getProductList();
 console.log('[DEBUG] getProductList() --> Promise: ', getRequest);
 
 const productsModelFromApi = new Products();
@@ -95,4 +95,6 @@ getRequest.then((data) => {
     console.log('[DEBUG] PromiseResult --> Object', data);
     productsModelFromApi.setItems(data.items);
     console.log('[DEBUG] getItems(): ', productsModelFromApi.getItems());
+}).catch(error => {
+    console.error('[DEBUG] Ошибка при загрузке товаров с сервера:', error);
 });

@@ -106,12 +106,12 @@ Presenter - презентер содержит основную логику п
 
 ```
 interface IProduct {
-  id: string;
-  description: string;
-  image: string;
-  title: string;
-  category: string;
-  price: number | null;
+  id: string;    // Уникальный идентификатор товара
+  description: string;    // Подробное описание товара
+  image: string;    // Ссылка на изображение товара
+  title: string;    // Название товара
+  category: string;    // Категория товара
+  price: number | null;    // Цена товара
 }
 ```
 
@@ -120,10 +120,10 @@ interface IProduct {
 
 ```
 interface IBuyer {
-  payment: TPayment;
-  email: string;
-  phone: string;
-  address: string;
+  payment: TPayment;    // Способ оплаты заказа
+  email: string;    // Электронная почта для связи с покупателем
+  phone: string;    // Номер телефона для связи с покупателем
+  address: string;    // Адрес доставки заказа
 }
 ```
 
@@ -149,8 +149,8 @@ interface IApi {
 
 ```
 interface IProductListResponse {
-    total: number;
-    items: IProduct[];
+    total: number;    // Общее количество товаров
+    items: IProduct[];    // Список товаров
 }
 ```
 
@@ -159,8 +159,8 @@ interface IProductListResponse {
 
 ```
 interface IOrderRequest extends IBuyer {
-    total: number;
-    items: IProduct['id'][];
+    total: number;    // Общая стоимость заказа
+    items: IProduct['id'][];    // Список идентификаторов товаров в заказе
 }
 ```
 
@@ -169,8 +169,8 @@ interface IOrderRequest extends IBuyer {
 
 ```
 interface IOrderResponse {
-    id: string;
-    total: number;
+    id: string;    // Идентификатор созданного заказа
+    total: number;    // Общая стоимость заказа
 }
 ```
 
