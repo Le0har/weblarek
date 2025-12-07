@@ -139,8 +139,8 @@ type TPayment = 'card' | 'cash' | '';
 
 ```
 interface IApi {
-    get<T extends object>(uri: string): Promise<T>;
-    post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+  get<T extends object>(uri: string): Promise<T>;
+  post<T extends object>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
 }
 ```
 
@@ -149,8 +149,8 @@ interface IApi {
 
 ```
 interface IProductListResponse {
-    total: number;    // Общее количество товаров
-    items: IProduct[];    // Список товаров
+  total: number;    // Общее количество товаров
+  items: IProduct[];    // Список товаров
 }
 ```
 
@@ -159,8 +159,8 @@ interface IProductListResponse {
 
 ```
 interface IOrderRequest extends IBuyer {
-    total: number;    // Общая стоимость заказа
-    items: IProduct['id'][];    // Список идентификаторов товаров в заказе
+  total: number;    // Общая стоимость заказа
+  items: IProduct['id'][];    // Список идентификаторов товаров в заказе
 }
 ```
 
@@ -169,8 +169,8 @@ interface IOrderRequest extends IBuyer {
 
 ```
 interface IOrderResponse {
-    id: string;    // Идентификатор созданного заказа
-    total: number;    // Общая стоимость заказа
+  id: string;    // Идентификатор созданного заказа
+  total: number;    // Общая стоимость заказа
 }
 ```
 
@@ -179,6 +179,121 @@ interface IOrderResponse {
 
 ```
 type ApiPostMethods = 'POST' | 'PUT' | 'DELETE'
+```
+
+#### Интерфейс IHeader
+Данные, необходимые для отображения шапки сайта.
+
+```
+interface IHeader {
+  counter: number;    // количество товаров в корзине для отображения в счетчике
+}
+```
+
+#### Интерфейс IGallery
+Данные, необходимые для отображения списка карточек товара.
+
+```
+interface IGallery {
+  catalog: HTMLElement[];    // список карточек товаров
+}
+```
+
+#### Интерфейс IModal
+Данные, необходимые для отображения контента модального окна.
+
+```
+interface IModal {
+  content: HTMLElement;    // контент модального окна
+}
+```
+
+#### Интерфейс ISuccess
+Данные, необходимые для отображения текста с количеством списанных средств.
+
+```
+interface ISuccess {
+  description: string;    // текст с количеством списанных средств
+}
+```
+
+#### Интерфейс IBasket
+Данные, необходимые для отображения списка товаров и общей стоимости в корзине.
+
+```
+interface IBasket {
+  list: HTMLElement[];    // список товаров в корзине
+  price: number | null;    // общая стоимость товаров в корзине
+  valid: boolean;    // блокирует/разблокирует кнопку "Оформить" в корзине
+}
+```
+
+#### Интерфейс ICard
+Базовый интерфейс карточки товара. Данные, необходимые для отображения элементов карточки товара.
+
+```
+interface ICard {
+  title: string;    // название товара
+  pprice: number | null;    // стоимость товара
+}
+```
+
+#### Интерфейс ICardCatalog наследуюется от ICard
+Интерфейс карточки товара в списке товаров(каталоге). Данные, необходимые для отображения элементов карточки товара.
+
+```
+interface ICardCatalog extends ICard {
+  category: string;    // категория товара
+  image: string;    // изображение товара
+}
+```
+
+#### Интерфейс ICardBasket наследуюется от ICard
+Интерфейс карточки товара в списке товаров(корзине). Данные, необходимые для отображения элементов карточки товара.
+
+```
+interface ICardBasket extends ICard {
+  index: number;    // порядковый номер товара в корзине
+}
+```
+
+#### Интерфейс ICardPreview наследуюется от ICard
+Интерфейс карточки товара в модальном окне. Данные, необходимые для отображения элементов карточки товара.
+
+```
+interface ICardPreview extends ICard {
+  category: string;    // категория товара
+  image: string;    // изображение товара
+  text: string;    // описание товара
+  inCart: boolean;    // проверяет наличие товара в корзине
+}
+```
+
+#### Интерфейс IForm
+Базовый интерфейс формы. Данные, необходимые для проверки формы.
+```
+interface IForm {
+  errors: string;    // ошибки формы
+  valid: boolean;    // валидация формы
+}
+```
+
+#### Интерфейс IFromOrder наследуюется от IForm
+Данные, необходимые для оформления заказа.
+```
+interface IFromOrder extends IForm {
+  payment: TPayment;    // способ оплаты
+  address: string;    // адрес доставки
+}
+```
+
+#### Интерфейс IFormContact наследуюется от IForm
+Данные, необходимые для оформления заказа. Контакты покупателя.
+```
+interface IFormContact extends IForm {
+  email: string;    // электроная почта
+  phone: string;    // телефон
+}
 ```
 
 ### Модели данных
@@ -254,3 +369,257 @@ type ApiPostMethods = 'POST' | 'PUT' | 'DELETE'
 Методы класса:
 `getProductList(): Promise<IProductListResponse>` - получает с сервера список товаров.
 `createOrder(data: IOrderRequest): Promise<IOrderResponse>` - отправляет на сервер данные о покупателе и выбранных товарах.
+
+### Слой представлений
+
+#### Класс Header наследуется от класса Component<IHeader>
+Отвечает за отображение корзины и счетчика количества товаров в шапке сайта.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`counterElement: HTMLElement` - счетчик количества товаров в корзине.
+`headerBasketButton: HTMLButtonElement` - кнопка для открытия корзины.
+`events: IEvents` - брокер событий для коммуникации с презентером.
+
+Методы класса:
+`set counter(counter: number)` - установить количество товаров в корзине.
+
+#### Класс Gallery наследуется от класса Component<IGallery>
+Отвечает за отображение списка карточек товаров.
+
+Конструктор:
+`constructor(container: HTMLElement)` - принимает ссылку на DOM элемент.
+
+Методы класса:
+`set catalog(items: HTMLElement[])` - установить список карточек товаров.
+
+#### Класс Modal наследуется от класса Component<IModal>
+Отвечает за отображение самого модального окна.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`contentElement: HTMLElement` - контент модального окна.
+`modalButton: HTMLButtonElement` - кнопка для закрытия окна.
+`events: IEvents` - брокер событий для коммуникации с презентером.
+
+Методы класса:
+`set content(content: HTMLElement)` - установить контент для модального окна.
+`open(): void` - открыть модальное окно.
+`lose(): void` - закрыть модальное окно.
+`isOpen(): void` - открыто ли сейчас модальное окно.
+
+#### Класс Success наследуется от класса Component<ISuccess>
+Отвечает за отображение успешного оформления заказа в модальном окне.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`descriptionElement: HTMLElement` - описание количества списанных средств после оформленя заказа.
+`successButton: HTMLButtonElement` - кнопка для закрытия окна.
+`events: IEvents` - брокер событий для коммуникации с презентером.
+
+Методы класса:
+`set description(description: string)` - установить текст с количеством списанных средств.
+
+#### Класс Basket наследуется от класса Component<IBasket>
+Отвечает за отображение корзины в модальном окне.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`listElement: HTMLElement` - список товаров в корзине.
+`priceElement: HTMLElement` - общая стоимость товаров в корзине.
+`basketButton: HTMLButtonElement`- кнопка для оформления заказа.
+`events: IEvents` - брокер событий для коммуникации с презентером.
+
+Методы класса:
+`set list(list: HTMLElement[])` - установить список товаров.
+`set price(price: number | null)` - установить текст с общей стоимостью товаров в корзине.
+`set valid(isValid: boolean)` - блокирует/разблокирует кнопку "Оформить" в корзине.
+
+#### Класс Card наследуется от класса Component<ICard>
+Базовый класс, отвечающий за отображение карточки товара.
+
+Конструктор:
+`constructor(container: HTMLElement)` - принимает ссылку на DOM элемент.
+
+Поля класса:
+`titleElement: HTMLElement` - название товара.
+`priceElement: HTMLElement` - стоимость товара.
+
+Методы класса:
+`set title(title: string)` - установить название товара.
+`set price(price: number | null)` - установить стоимость товара.
+
+#### Класс CardCatalog наследуется от класса Card
+Наследуются от базового класса Card. Отвечает за отображение карточки товара в списке товаров(каталоге).
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`categoryElement: HTMLElement` - категория товара.
+`imageElement: HTMLImageElement` - изображение товара.
+`cardCatalogButton: HTMLButtonElement` - кнопка для открытия модального окна с подробным описанием товара.
+
+Методы класса:
+`set category(category: string)` - установить категорию товара.
+`set image(src: string)` - установить изображение товара.
+
+#### Класс CardBasket наследуется от класса Card
+Наследуются от базового класса Card. Отвечает за отображение карточки товара в списке товаров(корзине).
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`indexElement: HTMLElement` - порядковый номер в корзине.
+`cardBasketButton: HTMLButtonElement` - кнопка для удаления товара из корзины.
+
+Методы класса:
+`set index(index: number)` - установить порядковый номер товара в корзине.
+
+#### Класс CardPreview наследуется от класса Card
+Наследуются от базового класса Card. Отвечает за подробное отображение карточки товара в модальном окне.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`categoryElement: HTMLElement` - категория товара.
+`textElement: HTMLElement` - описание товара.
+`imageElement: HTMLImageElement` - изображение товара.
+`cardPreviewButton: HTMLButtonElement` - кнопка для перемещения товара в корзину.
+
+Методы класса:
+`set category(category: string)` - установить категорию товара.
+`set text(text: string)` - установить описание товара.
+`set image(src: string)` - установить изображение товара.
+`set inCart(isInCart: boolean)` - меняет название кнопки "Удалить из корзины" / "В корзину".
+
+#### Класс Form наследуется от класса Component<ICard>
+Базовый класс, отвечающий за заполнение формы покупателем.
+
+Конструктор:
+`constructor(container: HTMLElement)` - принимает ссылку на DOM элемент.
+
+Поля класса:
+`errorsElement: HTMLElement` - ошибки формы.
+`submitButton: HTMLButtonElement` - кнопка принятия формы.
+
+Методы класса:
+`set errors(errors: string)` - ошибки формы.
+`set valid(value: boolean)` - валидация формы делает активной/некативной кнопку принятия формы.
+
+#### Класс FormOrder наследуется от класса Form
+Наследуются от базового класса Form. Отвечает за заполнение формы для заказа покупателем.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`orderCardButton: HTMLButtonElement` - кнопка для выбора типа оплаты "Онлайн"(card).
+`orderCashButton: HTMLButtonElement` - кнопка для выбора типа оплаты "При получении"(cash).
+`addressInputEelement: HTMLInputElement` - поле для ввода адреса доставки.
+
+Методы класса:
+`set address(address: string)` - установить адрес доставки.
+`set payment(value: TPayment)` - делает активной/некативной одну из кнопок способа оплаты заказа.
+
+#### Класс FormContact наследуется от класса Form
+Наследуются от базового класса Form. Отвечает за заполнение формы для контактов покупятеля.
+
+Конструктор:
+`constructor(container: HTMLElement, events: IEvents)` - принимает ссылку на DOM элемент и брокер событий.
+
+Поля класса:
+`emailInputElement: HTMLInputElement` - поле для ввода электронной почты.
+`phoneInputElement: HTMLInputElement` - поле для ввода телефона.
+
+Методы класса:
+`set email(email: string)` - установить электронную почту.
+`set phone(phone: string)` - установить телефон.
+
+### Слой события приложения
+
+#### События View → Presenter
+
+##### Карточка товара (CardCatalog):
+
+`card:selected` - клик по карточке в каталоге
+
+##### Предпросмотр товара (CardPreview):
+
+`card:add` - добавление товара в корзину (кнопка "В корзину")
+
+`card:remove` - удаление товара из корзины (кнопка "Удалить из корзины")
+
+##### Корзина (Basket):
+
+`basket:open` - открытие корзины (клик на иконку в шапке)
+
+`basket:place` - оформление заказа (кнопка "Оформить")
+
+`cardBasket:delete` - удаление товара из корзины (кнопка удаления)
+
+##### Форма заказа (FormOrder):
+
+`order:card` - выбор оплаты "Онлайн"
+
+`order:cash` - выбор оплаты "При получении"
+
+`order:address` - изменение поля адреса
+
+`order:submit` - отправка формы заказа (кнопка "Далее")
+
+##### Форма контактов (FormContact):
+
+`contact:email` - изменение поля email
+
+`contact:phone` - изменение поля телефона
+
+`contact:submit` - отправка формы контактов (кнопка "Оплатить")
+
+##### Модальное окно (Modal):
+
+`modal:close` - закрытие модального окна (клик на крестик или фон)
+
+##### Успешное оформление (Success):
+
+`success:close` - закрытие окна успешного оформления
+
+#### События Model → Presenter
+
+##### Товары (Products):
+
+`products:changed` - изменился список товаров
+
+##### Корзина (Cart):
+
+`cart:changed` - изменилось содержимое корзины
+
+##### Покупатель (Buyer):
+
+`buyer:changed` - изменились данные покупателя
+
+### Слой Презентер
+
+#### Структура:
+
+- Реализован в едином файле main.ts
+- Состоит из коллекции обработчиков событий (events.on())
+- Не является классом - это набор функций-обработчиков
+
+#### Основные обязанности:
+
+- Инициализация приложения
+- Обработка действий пользователя
+- Управление состоянием корзины
+- Валидация форм
+- Оформление заказа

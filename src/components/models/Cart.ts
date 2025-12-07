@@ -1,10 +1,13 @@
 import { IProduct } from '../../types/index.ts';
+import { IEvents } from '../base/Events.ts';
 
 export class Cart {
     private items: IProduct[];
+    private events: IEvents
 
-    constructor() {
+    constructor(events: IEvents) {
         this.items = [];
+        this.events = events;
     }
 
     getItems(): IProduct[] {
@@ -13,6 +16,7 @@ export class Cart {
 
     addItem(item: IProduct): void {
         this.items.push(item);
+        this.events.emit('cart:changed');
     }
 
     removeItem(item: IProduct): void {
@@ -27,6 +31,7 @@ export class Cart {
         }
         if (hasElementToRemove) {
             this.items.splice(indexElementToRemove, 1);
+            this.events.emit('cart:changed');
         }
     }
 
