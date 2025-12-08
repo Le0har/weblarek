@@ -44,7 +44,7 @@ getRequest.then((data) => {
 // Тестирование заполнения каталога
 events.on('products:changed', () => {
     const productList = productsModel.getItems();
-    let cardElements: HTMLElement[] = [];
+    const cardElements: HTMLElement[] = [];
 
     productList.forEach(product => {
         const cardCatalogElement = cloneTemplate('#card-catalog');
@@ -205,6 +205,9 @@ events.on('contact:phone', (data:{ phone: string }) => {
 
 
 // Отображение формы Success
+const successElement = cloneTemplate('#success');
+const success = new Success(successElement, events);
+
 events.on('contact:submit', () => {
     const buyerData = buyerModel.getData();
     const cartItems = cartModel.getItems();
@@ -222,9 +225,6 @@ events.on('contact:submit', () => {
     webLarekApi.createOrder(orderData)
         .then(response => {
             console.log('[DEBUG] Заказ успешно создан:', response);
-
-            const successElement = cloneTemplate('#success');
-            const success = new Success(successElement, events);
 
             modal.content = success.render({
                 description: `Списано ${total} синапсов`
@@ -247,7 +247,7 @@ events.on('success:close', () => {
 
 // Функция создания содержимого корзины
 function createBasketContent(): HTMLElement {
-    let basketElements: HTMLElement[] = [];
+    const basketElements: HTMLElement[] = [];
     const baskettList = cartModel.getItems();
 
     baskettList.forEach((product, index) => {
@@ -261,12 +261,6 @@ function createBasketContent(): HTMLElement {
         });
         basketElements.push(newBasketElement);
     });
-
-    if (basketElements.length === 0) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.textContent = 'Корзина пуста';
-        basketElements.push(emptyMessage);
-    }
 
     return basket.render({
         list: basketElements,

@@ -53,7 +53,7 @@ export class Buyer {
     }
 
     validate(): { payment?: string; email?: string; phone?: string; address?: string } {
-        let errors: { payment?: string; email?: string; phone?: string; address?: string } = {}
+        const errors: { payment?: string; email?: string; phone?: string; address?: string } = {}
         if (!this.payment) {
             errors.payment = 'Не выбран вид оплаты';
         }

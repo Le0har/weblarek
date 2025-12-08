@@ -23,7 +23,11 @@ export class Basket extends Component<IBasket> {
     }
 
     set list(list: HTMLElement[]) {
-        this.listElement.replaceChildren(...list);
+        if (list.length === 0) {
+            this.listElement.innerHTML = '<div>Корзина пуста</div>';
+        } else {
+            this.listElement.replaceChildren(...list);
+        }
     }
 
     set price(price: number | null) {
